@@ -62,6 +62,8 @@ public class Main {
         System.out.println("1 - Cadastro");
         System.out.println("2 - Listar todos");
         System.out.println("3 - buscar por nome");
+        System.out.println("7 - Cadastrar notas");
+        System.out.println("8 - Calcular medias");
         System.out.println("10 - Sair");
         System.out.println("===========================");
     }
