@@ -45,6 +45,9 @@ public class Main {
                 case 3:
                     //Consultar por nome
                     break;
+                case 8:
+                    capturaNotas(scan);
+                    break;
                 case 10:
                     System.out.println("Encerrando o sistema .... Até logo!");
                     break;
@@ -62,9 +65,9 @@ public class Main {
         System.out.println("1 - Cadastro");
         System.out.println("2 - Listar todos");
         System.out.println("3 - buscar por nome");
-        System.out.println("7 - Cadastrar notas");
+       // System.out.println("7 - Cadastrar notas");
         System.out.println("8 - Calcular medias");
-        System.out.println("9 - Resultado final   ");
+        //System.out.println("9 - Resultado final   ");
         System.out.println("10 - Sair");
         System.out.println("===========================");
     }
@@ -116,6 +119,47 @@ public class Main {
 
     }
 
+    public  static void capturaNotas(Scanner scanner){
+        double notas = 0;
+        int quantidade = 0;
+        boolean capturar = true;
+
+        while (capturar){
+
+            double nota;
+            System.out.println("Digite a nota ou 9999 para resultado!");
+            nota = scanner.nextDouble();
+
+            if(nota <0 ){
+                System.out.println("Nota inválida!");
+                continue;
+            }
+
+            if (nota == 9999){
+                capturar = false;
+                continue;
+            }
+
+            notas += nota;
+            quantidade++;
+        }
+
+        double media = calcularMedia(notas, quantidade);
+
+        System.out.println("Media do aluno é igual a "+media);
+
+    }
+
+
+    public static double calcularMedia(double notas, int quatidade){
+
+        if (notas == 0){
+            return 0;
+        }
+
+        return notas/quatidade;
+
+    }
 
 
 
