@@ -146,6 +146,18 @@ public class Main {
 
         double media = calcularMedia(notas, quantidade);
 
+        if (media ){
+
+        }
+
+        if (media){
+
+        }
+
+        if(media){
+
+        }
+
         System.out.println("Media do aluno é igual a "+media);
 
     }
