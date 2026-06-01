@@ -9,7 +9,7 @@ public class Main {
 
     private static final String DB_URL = "jdbc:mysql://localhost:3306/usuarios";
     private static final String DB_USUARIO = "root";
-    private static final String DB_SENHA = "root";
+    private static final String DB_SENHA = "";
 
 
 
@@ -266,3 +266,16 @@ public class Main {
 
 
 }
+
+
+//Script deste software
+//create database usuarios;
+//
+//create table usuarios (
+//        id int auto_increment primary key,
+//        nome varchar(250) not null,
+//cpf varchar(20),
+//endereco varchar(250),
+//email varchar(150),
+//telefone varchar(20)
+//);
