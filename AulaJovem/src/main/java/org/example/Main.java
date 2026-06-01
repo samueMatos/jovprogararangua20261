@@ -51,7 +51,7 @@ public class Main {
                     listarTodosUsuarios();
                     break;
                 case 3:
-                    //Consultar por nome
+                    consultaUsuarioPorNome(scan);
                     break;
                 case 8:
                     capturaNotas(scan);
