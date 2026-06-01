@@ -1,13 +1,21 @@
 package org.example;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/usuarios";
+    private static final String DB_USUARIO = "root";
+    private static final String DB_SENHA = "root";
+
+
+
     public static void main(String[] args) {
 
         Scanner scan = new Scanner(System.in);
-        List<String> usuarios = new ArrayList<>();
 
 
         //Exemplo de inicialização de lista
@@ -37,10 +45,10 @@ public class Main {
 
             switch (opcao){
                 case 1 :
-                    cadastrarUsuario(scan,usuarios);
+                    cadastrarUsuario(scan);
                     break;
                 case 2:
-                    listarTodosUsuarios(usuarios);
+                    listarTodosUsuarios();
                     break;
                 case 3:
                     //Consultar por nome
@@ -72,48 +80,138 @@ public class Main {
         System.out.println("===========================");
     }
 
-    public static void cadastrarUsuario(Scanner scan, List<String> usuarios){
-        String dados = "";
+    public static void cadastrarUsuario(Scanner scan){
+
 
         System.out.println("---Cadastro de USUÁRIO---");
 
         System.out.println("Digite o nome: ");
-        dados = scan.nextLine();
+        String nome = scan.nextLine();
 
         System.out.println("Digite o CPF: ");
-        dados += " | " + scan.nextLine();
+        String CPF = scan.nextLine();
 
         System.out.println("Digite o endereço: ");
-        dados += " | " + scan.nextLine();
+        String endereco = scan.nextLine();
+
+        if(endereco.length() > 250){
+            System.out.println("Endereco é invalido");
+        }
 
         System.out.println("Digite o E-mail: ");
         String email = scan.nextLine();
-        if(email.contains("@")) {
-            dados += " | " + email;
-        }else {
+        if(!email.contains("@")) {
             System.out.println("E-mail é invalido");
         }
 
         System.out.println("Digite o Telefone: ");
-        dados += " | " + scan.nextLine();
+        String telefone = scan.nextLine();
 
-        usuarios.add(dados);
+        String sql ="INSERT INTO usuarios(nome,cpf,endereco,email,telefone) VALUES(?,?,?,?,?)";
 
-        System.out.println("Usuário salvo com SUCESSO!");
+        try(Connection conn = conectar(); PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setString(1,nome);
+            stmt.setString(2,CPF);
+            stmt.setString(3,endereco);
+            stmt.setString(4,email);
+            stmt.setString(5,telefone);
+
+            int linhasAfetadas = stmt.executeUpdate();
+
+            if (linhasAfetadas>0){
+                System.out.println("Usuário salvo com SUCESSO!");
+            }
+        } catch (Exception e) {
+            System.out.println("FALHA ao Salvar!");
+            throw new RuntimeException(e);
+        }
+
+
+
     }
 
-    public static void listarTodosUsuarios(List<String> usuarios){
+    public static void listarTodosUsuarios(){
 
         System.out.println("Lista de usuários");
 
-        if (usuarios.isEmpty()){
-            System.out.println("Nenhum usuário encontrado!");
-        }else {
+        String sql ="SELECT * FROM usuarios";
 
-            for (int i = 0; i< usuarios.size();i++){
-                System.out.println( "Código: " +  (i +1) +". " + usuarios.get(i).toString() );
+        try(Connection conn = conectar();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()){
+
+            boolean encontrouDados = false;
+
+            //para percorrer todas as linhas
+            while (rs.next()){
+                encontrouDados =true;
+                System.out.println("Nome: "
+                                + rs.getString("nome")
+                                +" CPF: "
+                                + rs.getString("cpf")
+                                +" Email: "
+                                + rs.getString("email")
+                        );
+
+
+            }
+            if(encontrouDados){
+                System.out.println("Dados encontrados!");
+            }else {
+                System.out.println("Nenhum dado encontrado!");
             }
 
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+
+    public static void consultaUsuarioPorNome(Scanner scan){
+
+        System.out.println("Digite o nome do usuário: ");
+        String nome = scan.nextLine();
+
+
+
+        String sql ="SELECT * FROM usuarios WHERE nome LIKE ?";
+
+        try(Connection conn = conectar();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1,"%"+ nome +"%");
+            ResultSet rs = stmt.executeQuery();
+
+
+            boolean encontrouDados = false;
+
+            //para percorrer todas as linhas
+            while (rs.next()){
+                encontrouDados =true;
+                System.out.println("Nome: "
+                        + rs.getString("nome")
+                        +" CPF: "
+                        + rs.getString("cpf")
+                        +" Email: "
+                        + rs.getString("email")
+                );
+
+
+            }
+            if(encontrouDados){
+                System.out.println("Dados encontrados!");
+            }else {
+                System.out.println("Nenhum dado encontrado!");
+            }
+
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
 
@@ -146,17 +244,7 @@ public class Main {
 
         double media = calcularMedia(notas, quantidade);
 
-        if (media ){
 
-        }
-
-        if (media){
-
-        }
-
-        if(media){
-
-        }
 
         System.out.println("Media do aluno é igual a "+media);
 
@@ -164,16 +252,16 @@ public class Main {
 
 
     public static double calcularMedia(double notas, int quatidade){
-
         if (notas == 0){
             return 0;
         }
 
         return notas/quatidade;
-
     }
 
-
+    private static Connection conectar() throws SQLException {
+        return DriverManager.getConnection(DB_URL,DB_USUARIO,DB_SENHA);
+    }
 
 
 
